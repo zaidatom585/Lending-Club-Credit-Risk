@@ -1,11 +1,10 @@
-# Lending Club Credit Risk: Can a model beat the lender's own grades?
+# Lending Club Credit Risk: Default Prediction and Loan Selection on Databricks
 
-An end-to-end credit risk project on **Databricks**. It ingests 2.26 million Lending Club loans and 27.6 million rejected
-applications, builds a medallion lakehouse (bronze → silver → gold), trains default models with MLflow, and then asks
-the investor's question: *if I can only fund some of these loans, does the model pick a better portfolio than
-Lending Club's A1–G5 grades?*
+An end-to-end credit risk project on **Databricks**. The pipeline ingests 2.26 million Lending Club loans and 27.6
+million rejected applications into a Delta Lake lakehouse, cleans and validates the data, trains default-probability
+models tracked in MLflow, and compares the model's loan selection against Lending Club's own A1–G5 sub-grades.
 
-**Short answer:** on 2015 loans the model never saw, LightGBM ranks risk slightly better than Lending Club's sub-grades
+**Result:** on 2015 loans the model never saw, LightGBM ranks risk slightly better than Lending Club's sub-grades
 (AUC **0.682 vs 0.679**). That small edge turns into about **1 extra point of net return** when funding the safest
 10–40% of loans.
 
