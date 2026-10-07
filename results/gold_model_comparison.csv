@@ -1,0 +1,9 @@
+model,split,roc_auc,gini,ks,pr_auc,brier
+LightGBM,test,0.6823,0.3646,0.2647,0.2603,0.1203
+Lending Club sub-grade,test,0.6787,0.3573,0.2619,0.2507,
+Lending Club interest rate,test,0.6784,0.3569,0.2621,0.2526,
+Logistic regression,test,0.6756,0.3512,0.255,0.2533,0.121
+LightGBM,validation,0.6772,0.3544,0.2576,0.2389,0.1129
+Logistic regression,validation,0.6699,0.3398,0.2496,0.2332,0.1134
+Lending Club sub-grade,validation,0.6596,0.3191,0.2365,0.2161,
+Lending Club interest rate,validation,0.6577,0.3154,0.2342,0.2161,

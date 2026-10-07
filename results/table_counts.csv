@@ -1,0 +1,17 @@
+table_name,row_count
+bronze_accepted,2260701
+bronze_rejected,27648741
+gold_calibration,10
+gold_expected_loss,1
+gold_feature_importance,30
+gold_features,621022
+gold_loan_selection,10
+gold_model_comparison,8
+gold_predictions,621022
+gold_reason_codes,9
+gold_risk_bands,5
+gold_shap_importance,30
+silver_dq_log,2
+silver_loan_outcomes,2260668
+silver_loans,2260668
+silver_rejected,27648741

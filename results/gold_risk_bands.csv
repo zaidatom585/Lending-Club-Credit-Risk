@@ -1,0 +1,6 @@
+risk_band,loans,avg_predicted_pd_pct,actual_default_pct,avg_interest_rate,net_return_pct
+1 (lowest risk),59712,4.4,4.9,7.94,7.9
+2,56602,8.1,9.7,10.03,8.0
+3,55050,11.6,13.9,11.41,7.4
+4,54196,16.0,18.9,12.68,6.0
+5 (highest risk),57466,25.6,27.4,14.52,2.9

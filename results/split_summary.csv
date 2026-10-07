@@ -1,0 +1,4 @@
+split,first_year,last_year,loans,default_rate_pct
+train,2007,2013,175426,12.63
+validation,2014,2014,162570,13.73
+test,2015,2015,283026,14.89

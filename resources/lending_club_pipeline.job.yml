@@ -1,0 +1,38 @@
+resources:
+  jobs:
+    lending_club_pipeline:
+      name: lending_club_pipeline
+      tasks:
+        - task_key: prepare_landing_zone
+          notebook_task:
+            notebook_path: ../notebooks/00_prepare_landing_zone.py
+        - task_key: ingest_raw_autoloader
+          depends_on:
+            - task_key: prepare_landing_zone
+          notebook_task:
+            notebook_path: ../notebooks/01_ingest_raw_autoloader.py
+        - task_key: clean_and_type_loans
+          depends_on:
+            - task_key: ingest_raw_autoloader
+          notebook_task:
+            notebook_path: ../notebooks/02_clean_and_type_loans.py
+        - task_key: build_model_features
+          depends_on:
+            - task_key: clean_and_type_loans
+          notebook_task:
+            notebook_path: ../notebooks/04_build_model_features.py
+        - task_key: train_default_models
+          depends_on:
+            - task_key: build_model_features
+          notebook_task:
+            notebook_path: ../notebooks/05_train_default_models.py
+        - task_key: evaluate_lending_decisions
+          depends_on:
+            - task_key: train_default_models
+          notebook_task:
+            notebook_path: ../notebooks/06_evaluate_lending_decisions.py
+        - task_key: validate_pipeline
+          depends_on:
+            - task_key: evaluate_lending_decisions
+          notebook_task:
+            notebook_path: ../notebooks/07_validate_pipeline.py

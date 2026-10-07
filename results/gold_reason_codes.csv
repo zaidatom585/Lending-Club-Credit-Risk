@@ -1,0 +1,10 @@
+example,loan_id,predicted_pd_pct,rank,feature,feature_value,shap_log_odds
+low risk,63350495,0.5,1,num_actv_rev_tl,9.0,0.025
+low risk,63350495,0.5,2,bc_util,9.6,0.018
+low risk,63350495,0.5,3,acc_open_past_24mths,4.0,0.005
+medium risk,46794551,11.3,1,fico_avg,667.0,0.334
+medium risk,46794551,11.3,2,acc_open_past_24mths,7.0,0.283
+medium risk,46794551,11.3,3,dti,19.45,0.057
+high risk,42494412,53.1,1,purpose,small_business,0.618
+high risk,42494412,53.1,2,loan_to_income,0.4808,0.549
+high risk,42494412,53.1,3,fico_avg,662.0,0.319

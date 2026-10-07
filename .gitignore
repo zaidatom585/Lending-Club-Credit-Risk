@@ -1,0 +1,15 @@
+.databricks/
+.vscode/
+.venv/
+__pycache__/
+*.pyc
+data/
+*.csv
+*.gz
+*.zip
+
+.databricks
+
+data/
+
+!results/*.csv

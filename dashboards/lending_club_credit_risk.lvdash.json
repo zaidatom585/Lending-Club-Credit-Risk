@@ -1,0 +1,1151 @@
+{
+  "datasets": [
+    {
+      "name": "4040d523",
+      "displayName": "Headline",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT\n  MAX(CASE WHEN model = 'LightGBM'               THEN roc_auc END) AS model_auc,\n  MAX(CASE WHEN model = 'Lending Club sub-grade' THEN roc_auc END) AS grade_auc,\n  MAX(CASE WHEN model = 'LightGBM'               THEN ks      END) AS model_ks,\n  (SELECT COUNT(*) FROM workspace.lending_club.gold_predictions WHERE split = 'test') AS test_loans\nFROM workspace.lending_club.gold_model_comparison\nWHERE split = 'test'",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "dcd793d3",
+      "displayName": "Model Comparison",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT model,\n       ROUND(roc_auc, 4) AS auc,\n       ROUND(gini, 4)    AS gini,\n       ROUND(ks, 4)      AS ks,\n       ROUND(pr_auc, 4)  AS pr_auc,\n       ROUND(brier, 4)   AS brier\nFROM workspace.lending_club.gold_model_comparison\nWHERE split = 'test'\nORDER BY roc_auc DESC",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "16517b6b",
+      "displayName": "Loan Selection",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT funded_share_pct,\n       model_net_return_pct AS `Model (LightGBM)`,\n       grade_net_return_pct AS `Lending Club sub-grade`,\n       return_advantage_pts\nFROM workspace.lending_club.gold_loan_selection\nORDER BY funded_share_pct",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "e82d494f",
+      "displayName": "Calibration",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT decile,\n       predicted_pd_pct   AS `Predicted default %`,\n       actual_default_pct AS `Actual default %`\nFROM workspace.lending_club.gold_calibration\nORDER BY decile",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "4468f261",
+      "displayName": "Risk bands",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT risk_band,\n       loans,\n       avg_predicted_pd_pct,\n       actual_default_pct,\n       avg_interest_rate,\n       net_return_pct\nFROM workspace.lending_club.gold_risk_bands\nORDER BY risk_band",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "b02cd41a",
+      "displayName": "Grades",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT grade,\n       COUNT(*)                         AS loans,\n       ROUND(100 * AVG(is_default), 1)  AS actual_default_pct,\n       ROUND(AVG(int_rate), 2)          AS avg_interest_rate\nFROM workspace.lending_club.gold_predictions\nWHERE split = 'test'\nGROUP BY grade\nORDER BY grade",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "bfadc2ad",
+      "displayName": "Feature Importance",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT feature,\n       share_pct      AS `SHAP share %`,\n       gain_share_pct AS `Gain share %`\nFROM workspace.lending_club.gold_shap_importance\nORDER BY mean_abs_shap DESC\nLIMIT 15",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "167729f5",
+      "displayName": "Expected Loss",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT lgd_pct,\n       funded_total,\n       expected_loss,\n       actual_loss,\n       expected_loss_pct_of_funded,\n       actual_loss_pct_of_funded\nFROM workspace.lending_club.gold_expected_loss",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    },
+    {
+      "name": "e86e57c8",
+      "displayName": "Reason Codes",
+      "config": {
+        "version": "1.1",
+        "source": "SELECT example, loan_id, predicted_pd_pct, rank, feature, feature_value, shap_log_odds\nFROM workspace.lending_club.gold_reason_codes\nORDER BY predicted_pd_pct, rank",
+        "dimensions": [
+          {
+            "expr": "source.*"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset. Use this measure to count all",
+            "displayName": "Count"
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "2bc0493a",
+      "displayName": "Model evaluation (2015 test year)",
+      "layout": [
+        {
+          "widget": {
+            "name": "title",
+            "multilineTextboxSpec": {
+              "lines": [
+                "## Lending Club credit risk: LightGBM vs. Lending Club's own grades\n",
+                "Trained on 2007-2013 loans, tuned on 2014, tested on **2015** (36-month loans). Higher AUC = better at ranking who defaults. Loan selection shows the net return if an investor funds only the safest X% of loans."
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "model_auc",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "4040d523",
+                  "fields": [
+                    {
+                      "name": "max(model_auc)",
+                      "expression": "MAX(`model_auc`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Model AUC"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(model_auc)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "grade_auc",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "4040d523",
+                  "fields": [
+                    {
+                      "name": "max(grade_auc)",
+                      "expression": "MAX(`grade_auc`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Sub-grade AUC"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(grade_auc)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "model_ks",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "4040d523",
+                  "fields": [
+                    {
+                      "name": "max(model_ks)",
+                      "expression": "MAX(`model_ks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Model KS"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(model_ks)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "test_loans",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "4040d523",
+                  "fields": [
+                    {
+                      "name": "max(test_loans)",
+                      "expression": "MAX(`test_loans`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Test Loans"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "max(test_loans)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "model_comparison",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "dcd793d3",
+                  "fields": [
+                    {
+                      "name": "model",
+                      "expression": "`model`"
+                    },
+                    {
+                      "name": "auc",
+                      "expression": "`auc`"
+                    },
+                    {
+                      "name": "gini",
+                      "expression": "`gini`"
+                    },
+                    {
+                      "name": "ks",
+                      "expression": "`ks`"
+                    },
+                    {
+                      "name": "pr_auc",
+                      "expression": "`pr_auc`"
+                    },
+                    {
+                      "name": "brier",
+                      "expression": "`brier`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Model Comparison"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "model"
+                  },
+                  {
+                    "fieldName": "auc"
+                  },
+                  {
+                    "fieldName": "gini"
+                  },
+                  {
+                    "fieldName": "ks"
+                  },
+                  {
+                    "fieldName": "pr_auc"
+                  },
+                  {
+                    "fieldName": "brier"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "grades_default",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b02cd41a",
+                  "fields": [
+                    {
+                      "name": "grade",
+                      "expression": "`grade`"
+                    },
+                    {
+                      "name": "avg(actual_default_pct)",
+                      "expression": "AVG(`actual_default_pct`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Default Rate by Grade"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "grade",
+                  "displayName": "grade",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(actual_default_pct)",
+                  "displayName": "actual_default_pct",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "grade",
+                  "displayName": "grade",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "grades_volume",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b02cd41a",
+                  "fields": [
+                    {
+                      "name": "grade",
+                      "expression": "`grade`"
+                    },
+                    {
+                      "name": "sum(loans)",
+                      "expression": "SUM(`loans`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Loan Volume by Grade"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "grade",
+                  "displayName": "grade",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(loans)",
+                  "displayName": "loans",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "grade",
+                  "displayName": "grade",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 9,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "risk_bands",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "4468f261",
+                  "fields": [
+                    {
+                      "name": "risk_band",
+                      "expression": "`risk_band`"
+                    },
+                    {
+                      "name": "loans",
+                      "expression": "`loans`"
+                    },
+                    {
+                      "name": "avg_predicted_pd_pct",
+                      "expression": "`avg_predicted_pd_pct`"
+                    },
+                    {
+                      "name": "actual_default_pct",
+                      "expression": "`actual_default_pct`"
+                    },
+                    {
+                      "name": "avg_interest_rate",
+                      "expression": "`avg_interest_rate`"
+                    },
+                    {
+                      "name": "net_return_pct",
+                      "expression": "`net_return_pct`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Risk Band Summary"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "risk_band"
+                  },
+                  {
+                    "fieldName": "loans"
+                  },
+                  {
+                    "fieldName": "avg_predicted_pd_pct"
+                  },
+                  {
+                    "fieldName": "actual_default_pct"
+                  },
+                  {
+                    "fieldName": "avg_interest_rate"
+                  },
+                  {
+                    "fieldName": "net_return_pct"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "feature_importance",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "bfadc2ad",
+                  "fields": [
+                    {
+                      "name": "sum(SHAP share %)",
+                      "expression": "SUM(`SHAP share %`)"
+                    },
+                    {
+                      "name": "sum(Gain share %)",
+                      "expression": "SUM(`Gain share %`)"
+                    },
+                    {
+                      "name": "feature",
+                      "expression": "`feature`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Feature Importance (SHAP & Gain)",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "mark": {
+                "layout": "group"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fields": [
+                    {
+                      "fieldName": "sum(SHAP share %)",
+                      "displayName": "SHAP share %"
+                    },
+                    {
+                      "fieldName": "sum(Gain share %)",
+                      "displayName": "Gain share %"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "feature",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 14,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "reason_codes",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e86e57c8",
+                  "fields": [
+                    {
+                      "name": "example",
+                      "expression": "`example`"
+                    },
+                    {
+                      "name": "loan_id",
+                      "expression": "`loan_id`"
+                    },
+                    {
+                      "name": "predicted_pd_pct",
+                      "expression": "`predicted_pd_pct`"
+                    },
+                    {
+                      "name": "rank",
+                      "expression": "`rank`"
+                    },
+                    {
+                      "name": "feature",
+                      "expression": "`feature`"
+                    },
+                    {
+                      "name": "feature_value",
+                      "expression": "`feature_value`"
+                    },
+                    {
+                      "name": "shap_log_odds",
+                      "expression": "`shap_log_odds`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Reason Codes"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "example"
+                  },
+                  {
+                    "fieldName": "loan_id"
+                  },
+                  {
+                    "fieldName": "predicted_pd_pct"
+                  },
+                  {
+                    "fieldName": "rank"
+                  },
+                  {
+                    "fieldName": "feature"
+                  },
+                  {
+                    "fieldName": "feature_value"
+                  },
+                  {
+                    "fieldName": "shap_log_odds"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 24,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "loan_selection",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "16517b6b",
+                  "fields": [
+                    {
+                      "name": "funded_share_pct",
+                      "expression": "`funded_share_pct`"
+                    },
+                    {
+                      "name": "sum(Model (LightGBM))",
+                      "expression": "SUM(`Model (LightGBM)`)"
+                    },
+                    {
+                      "name": "sum(Lending Club sub-grade)",
+                      "expression": "SUM(`Lending Club sub-grade`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Loan Selection: Return vs Funded Share"
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "funded_share_pct",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "sum(Model (LightGBM))",
+                      "displayName": "Model (LightGBM)"
+                    },
+                    {
+                      "fieldName": "sum(Lending Club sub-grade)",
+                      "displayName": "Lending Club sub-grade"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "calibration",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "e82d494f",
+                  "fields": [
+                    {
+                      "name": "decile",
+                      "expression": "`decile`"
+                    },
+                    {
+                      "name": "avg(Predicted default %)",
+                      "expression": "AVG(`Predicted default %`)"
+                    },
+                    {
+                      "name": "avg(Actual default %)",
+                      "expression": "AVG(`Actual default %`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Calibration: Predicted vs Actual Default",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "mark": {
+                "layout": "group"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "decile",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "avg(Predicted default %)",
+                      "displayName": "Predicted default %"
+                    },
+                    {
+                      "fieldName": "avg(Actual default %)",
+                      "displayName": "Actual default %"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 19,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "expected_loss_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "167729f5",
+                  "fields": [
+                    {
+                      "name": "sum(expected_loss)",
+                      "expression": "SUM(`expected_loss`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Expected Loss"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(expected_loss)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 19,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "actual_loss_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "167729f5",
+                  "fields": [
+                    {
+                      "name": "sum(actual_loss)",
+                      "expression": "SUM(`actual_loss`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Actual Loss"
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(actual_loss)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 19,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "expected_loss_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "167729f5",
+                  "fields": [
+                    {
+                      "name": "lgd_pct",
+                      "expression": "`lgd_pct`"
+                    },
+                    {
+                      "name": "funded_total",
+                      "expression": "`funded_total`"
+                    },
+                    {
+                      "name": "expected_loss",
+                      "expression": "`expected_loss`"
+                    },
+                    {
+                      "name": "actual_loss",
+                      "expression": "`actual_loss`"
+                    },
+                    {
+                      "name": "expected_loss_pct_of_funded",
+                      "expression": "`expected_loss_pct_of_funded`"
+                    },
+                    {
+                      "name": "actual_loss_pct_of_funded",
+                      "expression": "`actual_loss_pct_of_funded`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Expected Loss Detail"
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "lgd_pct"
+                  },
+                  {
+                    "fieldName": "funded_total"
+                  },
+                  {
+                    "fieldName": "expected_loss"
+                  },
+                  {
+                    "fieldName": "actual_loss"
+                  },
+                  {
+                    "fieldName": "expected_loss_pct_of_funded"
+                  },
+                  {
+                    "fieldName": "actual_loss_pct_of_funded"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 21,
+            "width": 6,
+            "height": 3
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
